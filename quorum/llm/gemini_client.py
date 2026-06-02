@@ -29,8 +29,16 @@ class GeminiLLMClient:
             api_key: Google API key
             max_output_tokens: Maximum tokens in response (default 4096)
         """
-        self.client = genai.Client(api_key=api_key)
+        self.api_key = api_key
+        self._client = None
         self.max_output_tokens = max_output_tokens
+
+    @property
+    def client(self):
+        """Build the SDK client lazily so imports do not require live credentials."""
+        if self._client is None:
+            self._client = genai.Client(api_key=self.api_key)
+        return self._client
 
     async def call_llm(
         self,
