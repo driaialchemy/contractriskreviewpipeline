@@ -26,6 +26,11 @@ build/
 dist/
 *.egg-info/
 
+# Local analytical data
+data/
+*.duckdb
+*.duckdb.wal
+
 # Streamlit
 .streamlit/secrets.toml
 

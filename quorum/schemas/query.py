@@ -17,7 +17,7 @@ class ValidatedQuery(BaseModel):
 
 
 class QueryResult(BaseModel):
-    """Snowflake execution result for a query."""
+    """Database execution result for a query."""
 
     step_number: int
     sql_executed: str

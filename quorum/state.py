@@ -26,6 +26,7 @@ class AgentState(BaseModel):
     attempts: int = 0
     max_attempts: int = 3
     all_results: list[QueryResult] = Field(default_factory=list)
+    arbitration_history: list[ArbitrationResult] = Field(default_factory=list)
     insight_report: InsightReport | None = None
     error_message: str | None = None
     status: Literal["running", "complete", "failed"] = "running"
