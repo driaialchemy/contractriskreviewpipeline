@@ -2,6 +2,27 @@
 
 Quorum is an agentic data analyst that turns a natural-language business question into SQL, executes against local DuckDB TPC-H data by default, critiques the result with a multi-model panel, and returns a structured `InsightReport`. Snowflake remains available as an optional backend. It is built as a portfolio-grade demonstration of typed agent orchestration, deterministic safety checks, and model disagreement analysis.
 
+## For A Novice Reader
+
+Quorum is an AI data analyst demo. You ask a business question, and the system
+plans the analysis, writes SQL, runs the query against sample data, asks several
+AI reviewers to critique the answer, and then gives you a final report.
+
+It uses local DuckDB sample data by default, so you do not need a Snowflake
+account to see the workflow. Snowflake remains optional for people who want to
+connect the same pattern to a cloud warehouse.
+
+## For A Technical Reader
+
+The project uses LangGraph to coordinate a typed multi-step analysis workflow:
+planner, SQL generator, read-only SQL executor, OpenAI/Gemini/DeepSeek critics,
+Claude arbiter, step router, and synthesizer. Pydantic v2 schemas define the
+state and payloads crossing each boundary. DuckDB-backed TPC-H data is the
+default execution layer; Snowflake is optional through environment configuration.
+The SQL validator rejects unsafe or unsupported statements and constrains result
+size before the Streamlit UI displays progress, SQL, critic votes, caveats, and
+the final JSON report.
+
 ## Architecture
 
 ```mermaid
