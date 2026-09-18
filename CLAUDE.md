@@ -300,3 +300,20 @@ When updating README or documentation:
 5. Check `build_conclusions.md` for architectural decisions
 6. Verify model strings match registry exactly
 7. Confirm DeepSeek uses Anthropic SDK format with correct base_url
+
+## Audit Remediation Notes
+
+- Audit path: $AuditFile
+- Risk level from audit: $risk.
+- Addressed audit issues: Multiple AI provider integrations (anthropic, gemini, openai) — elevated orchestration complexity.; Credential pattern indicators in code: api_key; Risk level is HIGH, expected LOW.; Dependency manifests present: pyproject.toml; HTTP networking libraries in use: requests; Test suite present — actively developed project.
+
+
+## AI Provider Boundary
+
+AI providers detected by audit: anthropic, gemini, openai. Use providers only for the repository's documented workflow. API keys must be supplied through environment variables or managed platform secrets, never committed or echoed. Do not add redundant providers without human approval.
+
+
+## Human Review Required
+
+This audit classified the repo as HIGH risk. Agents may draft governance/documentation updates, but credential, provider, database, deployment, and data-export remediation requires human review before code or data changes.
+
