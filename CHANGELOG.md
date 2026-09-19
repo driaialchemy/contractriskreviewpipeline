@@ -1,0 +1,2 @@
+- P1: risk-flag audit records now include reasoning_path, policy_matched, and confidence alongside each playbook flag.
+- policy_matched writes now emit the playbook clause id string per the canonical lineage schema.

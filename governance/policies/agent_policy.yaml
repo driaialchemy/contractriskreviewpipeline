@@ -1,0 +1,47 @@
+version: "1.0"
+description: Agent naming, documentation, and structure policy
+enforcement_mode: validation_only
+
+required_agents:
+  - ExtractionAgent
+  - RiskAgent
+  - SummaryAgent
+
+rules:
+  - id: agent-module-exists
+    severity: critical
+    enforcement_mode: validation_only
+    check: agent module file exists
+
+  - id: agent-class-exists
+    severity: critical
+    enforcement_mode: validation_only
+    check: agent class is defined in module
+
+  - id: agent-name-attribute
+    severity: critical
+    enforcement_mode: validation_only
+    check: agent defines name matching expected agent name
+
+  - id: agent-extends-base
+    severity: critical
+    enforcement_mode: validation_only
+    check: agent class inherits from BaseAgent
+
+  - id: agent-async-process
+    severity: critical
+    enforcement_mode: validation_only
+    check: agent implements async process method
+
+  - id: agent-documented
+    severity: warning
+    enforcement_mode: validation_only
+    check: agent module or class has a docstring
+
+remediation:
+  agent-module-exists: Restore the missing agent module under src/agents/
+  agent-class-exists: Define the agent class matching the governance spec
+  agent-name-attribute: Set class-level name attribute to the canonical agent name
+  agent-extends-base: Inherit from BaseAgent in src/agents/base.py
+  agent-async-process: Implement async def process(self, state) -> AgentState
+  agent-documented: Add a module or class docstring describing agent responsibility

@@ -1,0 +1,81 @@
+version: "1.0"
+description: Audit, risk output, and summary traceability policy
+enforcement_mode: validation_only
+
+risk_findings:
+  required_fields:
+    - severity
+    - deviation
+    - human_review_status
+  reason_field: deviation
+  human_review:
+    required_when_severity_in:
+      - critical
+      - high
+    required_value: required
+    pipeline_behavior: validation_only
+    note: Human review status is recorded on findings; summary generation is not blocked at runtime.
+
+summary:
+  traceability:
+    source: risk_flags
+    target: final_report.clause_by_clause
+    required_clause_fields:
+      - clause_type
+      - severity
+      - recommendation
+
+audit_outputs:
+  execution_log:
+    file: EXECUTION_LOG.md
+    exporter: src/orchestrator/engine.py
+  session_logs:
+    directory: data/logs
+  session_audit_reports:
+    builder: report_builder.py
+    class: SessionAuditReport
+
+governance_reports:
+  must_include_evidence_paths: true
+  output_directory: data/logs
+  markdown_prefix: governance_report_
+  json_prefix: governance_report_
+
+rules:
+  - id: risk-severity-present
+    severity: critical
+    enforcement_mode: validation_only
+    check: RiskFlag model includes severity field
+
+  - id: risk-reason-present
+    severity: critical
+    enforcement_mode: validation_only
+    check: RiskFlag model includes deviation reason field
+
+  - id: human-review-on-high-critical
+    severity: critical
+    enforcement_mode: validation_only
+    check: RiskFlag includes human_review_status and RiskAgent sets required for high/critical
+
+  - id: summary-traceability
+    severity: critical
+    enforcement_mode: validation_only
+    check: SummaryAgent builds clause_by_clause from risk flags
+
+  - id: execution-log-exporter
+    severity: critical
+    enforcement_mode: validation_only
+    check: orchestrator exports EXECUTION_LOG.md
+
+  - id: audit-report-builder
+    severity: critical
+    enforcement_mode: validation_only
+    check: SessionAuditReport exists in report_builder.py
+
+remediation:
+  risk-severity-present: Add severity to RiskFlag in src/orchestrator/state.py
+  risk-reason-present: Add deviation field to RiskFlag as the risk reason
+  human-review-on-high-critical: Set human_review_status to required for critical/high severities
+  summary-traceability: Build final_report.clause_by_clause from risk_flags in SummaryAgent
+  execution-log-exporter: Ensure export_execution_log writes EXECUTION_LOG.md
+  audit-report-builder: Implement SessionAuditReport in report_builder.py

@@ -1,0 +1,66 @@
+version: "1.0"
+description: Expected pipeline stages and risk output contracts
+enforcement_mode: validation_only
+
+stages:
+  - name: extraction
+    agent: ExtractionAgent
+  - name: risk_assessment
+    agent: RiskAgent
+  - name: advisory
+    agent: SummaryAgent
+  - name: complete
+    agent: null
+
+shared_data_keys:
+  extraction: extractions
+  risk_assessment: risk_flags
+  risk_assessment_summary: risk_summary
+  advisory: final_report
+
+risk_output:
+  model: RiskFlag
+  required_fields:
+    - clause_type
+    - severity
+    - deviation
+    - playbook_standard
+    - extracted_value
+    - recommendation
+    - human_review_status
+  severity_values:
+    - critical
+    - high
+    - medium
+    - low
+    - none
+  reason_field: deviation
+
+summary_output:
+  model_key: final_report
+  required_fields:
+    - contract_title
+    - session_id
+    - review_date
+    - overall_risk_severity
+    - executive_summary
+    - clause_by_clause
+    - top_priority_actions
+  traceability:
+    clause_by_clause_must_include:
+      - clause_type
+      - severity
+      - recommendation
+
+human_review:
+  required_for_severities:
+    - critical
+    - high
+  required_status_value: required
+  default_status_value: not_required
+
+failure_conditions:
+  - missing_risk_severity
+  - missing_risk_reason
+  - missing_human_review_on_high_critical
+  - summary_not_traceable_to_risk

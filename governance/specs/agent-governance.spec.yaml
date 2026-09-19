@@ -1,0 +1,37 @@
+version: "1.0"
+description: Expected agents for the CUAD contract review pipeline
+enforcement_mode: validation_only
+
+agents:
+  - name: ExtractionAgent
+    module: src/agents/extraction.py
+    base_class: BaseAgent
+    step: extraction
+    next_step: risk_assessment
+    responsibility: Extract playbook clause spans from CUAD Q&A pairs
+
+  - name: RiskAgent
+    module: src/agents/risk.py
+    base_class: BaseAgent
+    step: risk_assessment
+    next_step: advisory
+    responsibility: Compare clauses against playbook and assign severity
+
+  - name: SummaryAgent
+    module: src/agents/summary.py
+    base_class: BaseAgent
+    step: advisory
+    next_step: complete
+    responsibility: Produce executive summary traceable to risk findings
+
+requirements:
+  must_extend_base_agent: true
+  must_define_name_attribute: true
+  must_implement_async_process: true
+  must_have_module_docstring_or_class_docstring: true
+
+failure_conditions:
+  - missing_agent_module
+  - agent_class_not_found
+  - agent_missing_name
+  - agent_not_extending_base

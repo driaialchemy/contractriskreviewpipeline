@@ -1,0 +1,39 @@
+# Governance and tests for the CUAD pipeline.
+# Branch assumption: triggers on main/master. Adjust `on.branches` if your default branch differs.
+
+name: Governance and Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pytest
+        run: pytest tests/ -v
+
+      - name: Run governance validation
+        run: python -m governance.validate
+
+      - name: Upload governance reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-reports
+          path: data/logs/governance_report_*
+          if-no-files-found: ignore

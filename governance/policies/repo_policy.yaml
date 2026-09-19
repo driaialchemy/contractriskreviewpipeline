@@ -1,0 +1,68 @@
+version: "1.0"
+description: Repository structure and sensitive path policy
+enforcement_mode: validation_only
+
+required_files:
+  - main.py
+  - dashboard.py
+  - report_builder.py
+  - requirements.txt
+  - README.md
+  - data/playbook.json
+  - src/config.py
+  - src/orchestrator/engine.py
+  - src/orchestrator/state.py
+  - src/agents/base.py
+  - src/agents/extraction.py
+  - src/agents/risk.py
+  - src/agents/summary.py
+  - tests/test_pipeline.py
+
+required_directories:
+  - src
+  - src/agents
+  - src/orchestrator
+  - tests
+  - data
+  - data/logs
+
+critical_sensitive_paths:
+  - .env
+  - .env.*
+  - secrets/
+  - credentials/
+  - data/prod/
+  - "*.db"
+  - "*.sqlite"
+
+critical_sensitive_exceptions:
+  - .env.example
+
+generated_cache_paths:
+  - __pycache__/
+  - .pytest_cache/
+  - .venv/
+  - venv/
+  - "*.log"
+
+path_categories:
+  critical_sensitive:
+    finding_level: critical
+    rule_id: critical_sensitive_path_present
+    message_prefix: "Critical sensitive path present"
+  generated_cache:
+    finding_level: info
+    rule_id: generated_cache_path_present
+    message_prefix: "Generated or cache path present (agent-unsafe, not a secret)"
+
+tests:
+  directory: tests
+  minimum_files: 1
+  required_patterns:
+    - test_*.py
+
+failure_conditions:
+  - missing_required_file
+  - missing_required_directory
+  - missing_tests
+  - critical_sensitive_path_present

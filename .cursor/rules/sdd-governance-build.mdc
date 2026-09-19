@@ -1,0 +1,167 @@
+﻿---
+description: Add SDD governance to the CUAD contract risk-review pipeline.
+alwaysApply: true
+---
+
+# SDD Governance Build Rules
+
+## Repository Context
+
+This repository is a CUAD contract review and risk-flagging pipeline.
+
+Its current function is:
+
+- ingest CUAD contracts
+- extract legal clause spans
+- compare clauses against a legal playbook
+- assign risk severity
+- generate plain-English summaries
+- write execution logs and audit reports
+
+Do not replace the existing contract-review pipeline.
+
+## Target Architecture
+
+Add a governance layer using this framing:
+
+- SDD as the governance methodology
+- Policy-as-code as the enforcement layer
+- CI/CD as the execution layer
+- Audit reports as the evidence layer
+
+## Build Goal
+
+Create an SDD-inspired governance layer that validates whether the contract-review pipeline, agents, risk outputs, logs, reports, and repo structure conform to machine-readable governance specs.
+
+The governance layer should not replace the existing ExtractionAgent, RiskAgent, SummaryAgent, CLI, Streamlit dashboard, or tests.
+
+## Required Structure
+
+Create or adapt the following structure:
+
+governance/
+  specs/
+    agent-governance.spec.yaml
+    pipeline-governance.spec.yaml
+    audit-governance.spec.yaml
+    ci-governance.spec.yaml
+  policies/
+    repo_policy.yaml
+    agent_policy.yaml
+    audit_policy.yaml
+  validators/
+    spec_loader.py
+    repo_validator.py
+    agent_validator.py
+    pipeline_validator.py
+    audit_validator.py
+  reports/
+    governance_report.py
+  models.py
+  validate.py
+
+## Requirements
+
+The governance layer must validate:
+
+- required files exist
+- required folders exist
+- tests exist
+- sensitive files are not considered safe for agent editing
+- agents are named and documented
+- risk outputs include severity and reason
+- summaries include traceability to risk findings
+- audit logs are expected outputs
+- high and critical findings require human review status
+- governance reports are generated as evidence
+
+## CLI Requirement
+
+Add a simple command such as:
+
+python -m governance.validate
+
+or:
+
+python governance/validate.py
+
+Choose the least disruptive option.
+
+## CI/CD Requirement
+
+Add or update GitHub Actions so the repo can:
+
+- install dependencies
+- run tests
+- run governance validation
+- fail on critical governance failures
+- avoid deployment
+
+## Testing Requirement
+
+Add tests for:
+
+- loading governance specs
+- loading policies
+- validating required files
+- validating sensitive paths
+- generating governance reports
+- full governance pass case
+- full governance failure case
+
+Do not remove existing tests.
+
+## Documentation Requirement
+
+Update README.md to explain:
+
+- what the SDD governance layer does
+- how SDD acts as the methodology
+- how policy-as-code enforces requirements
+- how CI/CD executes checks
+- how audit reports provide evidence
+- how to run the governance validator
+
+## Token Efficiency
+
+Do not repeatedly reread the same files.
+
+First inspect:
+
+- README.md
+- requirements.txt
+- main.py
+- dashboard.py
+- report_builder.py
+- src/
+- tests/
+- .github/workflows/ if present
+
+Then create:
+
+docs/CURSOR_WORKING_NOTES.md
+
+Use that file to summarize the project and avoid repeatedly rereading unchanged files.
+
+## Non-Goals
+
+Do not add Firecrawl, MCP, Langflow, or Dify in this task.
+
+Do not convert the project to LangChain, AutoGen, or a heavy agent framework.
+
+Do not hardcode local Windows paths into reusable source code.
+
+Do not break the existing Streamlit dashboard or CLI.
+
+## Definition of Done
+
+The task is complete when:
+
+- governance specs exist
+- policy files exist
+- validators execute
+- governance report is generated
+- tests pass
+- README is updated
+- GitHub Actions can run tests and governance validation
+- existing CUAD contract-review functionality still works

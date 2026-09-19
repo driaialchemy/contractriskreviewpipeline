@@ -1,0 +1,41 @@
+version: "1.0"
+description: Expected audit artifacts and evidence outputs
+enforcement_mode: validation_only
+
+execution_log:
+  path: EXECUTION_LOG.md
+  producer: src/orchestrator/engine.py
+  required_sections:
+    - Agent Execution Table
+    - Risk Summary
+    - Top Priority Actions
+
+session_state_logs:
+  directory: data/logs
+  pattern: "*.json"
+  description: Full AgentState snapshots per pipeline run
+
+session_audit_reports:
+  directory: data/logs
+  markdown_pattern: audit_report_*.md
+  json_pattern: audit_report_*.json
+  producer: report_builder.py
+
+governance_reports:
+  directory: data/logs
+  markdown_pattern: governance_report_*.md
+  json_pattern: governance_report_*.json
+  producer: governance/reports/governance_report.py
+
+ci_workflow:
+  path: .github/workflows/governance.yml
+
+required_evidence:
+  - EXECUTION_LOG.md template in orchestrator
+  - SessionAuditReport class in report_builder.py
+  - data/logs directory writable
+
+failure_conditions:
+  - missing_execution_log_exporter
+  - missing_audit_report_builder
+  - missing_logs_directory

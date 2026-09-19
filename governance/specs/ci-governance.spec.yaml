@@ -1,0 +1,33 @@
+version: "1.0"
+description: CI/CD expectations for governance enforcement
+enforcement_mode: validation_only
+
+workflow:
+  provider: github_actions
+  path: .github/workflows/governance.yml
+
+required_steps:
+  - checkout
+  - setup_python
+  - install_dependencies
+  - run_pytest
+  - run_governance_validate
+
+commands:
+  install: pip install -r requirements.txt
+  test: pytest tests/ -v
+  governance: python -m governance.validate
+
+failure_policy:
+  fail_on_critical_governance_findings: true
+  fail_on_test_failures: true
+
+non_goals:
+  - deployment
+  - container_publish
+  - cloud_provision
+
+failure_conditions:
+  - missing_workflow_file
+  - workflow_missing_pytest_step
+  - workflow_missing_governance_step

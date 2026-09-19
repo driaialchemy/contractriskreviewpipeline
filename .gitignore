@@ -34,3 +34,6 @@ dist/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local CUAD pipeline logs
+data/logs/*.json
